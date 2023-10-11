@@ -75,8 +75,7 @@ class InternetConnection {
     List<InternetCheckOption>? customCheckOptions,
     bool useDefaultOptions = true,
   }) : assert(
-          useDefaultOptions ||
-              (customCheckOptions != null && customCheckOptions.isNotEmpty),
+          useDefaultOptions || (customCheckOptions != null && customCheckOptions.isNotEmpty),
           'You must provide a list of options if you are not using the '
           'default ones',
         ) {
@@ -173,9 +172,8 @@ class InternetConnection {
   ///
   /// Returns a [Future] that completes with the [InternetStatus] indicating
   /// the current internet connection status.
-  Future<InternetStatus> get internetStatus async => await hasInternetAccess
-      ? InternetStatus.connected
-      : InternetStatus.disconnected;
+  Future<InternetStatus> get internetStatus async =>
+      await hasInternetAccess ? InternetStatus.connected : InternetStatus.disconnected;
 
   /// Internal method for emitting status updates.
   ///
@@ -233,5 +231,15 @@ class InternetConnection {
         }
       },
     );
+  }
+
+  Future<void> forceConnectionCheck() async {
+    final currentStatus = await internetStatus;
+
+    if (!_statusController.hasListener) return;
+
+    _statusController.add(currentStatus);
+
+    _lastStatus = currentStatus;
   }
 }
